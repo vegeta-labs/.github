@@ -1,0 +1,32 @@
+name: Sync release versions
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-releases
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update release links
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/sync-releases.sh
+      - name: Commit if changed
+        run: |
+          if git diff --quiet; then echo "Already up to date"; exit 0; fi
+          git diff
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am 'Sync release versions'
+          git push
