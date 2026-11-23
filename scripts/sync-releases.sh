@@ -3,7 +3,7 @@
 # Only the text between <!--<repo>-release--> and <!--/<repo>-release--> changes.
 set -euo pipefail
 readme=profile/README.md
-for repo in goten trunks; do
+for repo in goten trunks bulma; do
   tag=$(gh api "repos/vegeta-labs/$repo/releases/latest" --jq .tag_name)
   if ! [[ $tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "::error::$repo latest release tag '$tag' is not vX.Y.Z"; exit 1
